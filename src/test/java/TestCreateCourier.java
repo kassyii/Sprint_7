@@ -1,6 +1,5 @@
-import api.Post;
-import api.PostApi;
-import api.Result;
+import api.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +16,10 @@ public class TestCreateCourier {
     String login;
     String password;
     String firstNameCouriers;
+    String courierId;
     PostApi postApi;
+    DeleteApi deleteApi;
+
 
     @BeforeEach
     void setUp(){
@@ -25,6 +27,21 @@ public class TestCreateCourier {
         this.password = "strong_password_987654321";
         this.firstNameCouriers = "Leo";
         this.postApi = new PostApi();
+        this.deleteApi = new DeleteApi();
+    }
+
+    @AfterEach
+    void tearDown() {
+        //выполним авторизацию с созданным курьером
+        Post postToLogin = new Post(login,password);
+        Result actualPost = postApi.getPostLoginWithStatus(postToLogin);
+        this.courierId = actualPost.getPost().getId();
+
+        // Удаляем курьера, если ID был получен
+        if (courierId != null) {
+            Delete deleteCourier = new Delete(courierId);
+            deleteApi.deleteCourierById(deleteCourier);
+        }
     }
 
     @Test
@@ -36,6 +53,9 @@ public class TestCreateCourier {
         assertThat(actualPost).isNotNull();
         assertThat(actualPost.getStatusCode()).isEqualTo(201);
         assertThat(actualPost.getPost().getOk()).isTrue();
+
+        this.login = login;
+        this.password = password;
     }
 
     @Test
