@@ -53,9 +53,6 @@ public class TestCreateCourier {
         assertThat(actualPost).isNotNull();
         assertThat(actualPost.getStatusCode()).isEqualTo(201);
         assertThat(actualPost.getPost().getOk()).isTrue();
-
-        this.login = login;
-        this.password = password;
     }
 
     @Test
